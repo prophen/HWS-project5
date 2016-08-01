@@ -12,6 +12,8 @@ class MasterViewController: UITableViewController {
 
     var allWords = [String]()
     var objects = [String]()
+    var score = 0
+  
 
 
     override func viewDidLoad() {
@@ -26,17 +28,15 @@ class MasterViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(promptForAnswer))
         
-        
         startGame()
     }
-    
-  
+
     
     func startGame() {
         allWords = GKRandomSource.sharedRandom().arrayByShufflingObjectsInArray(allWords) as! [String]
-        title = allWords[0]
+        title = allWords[0] 
         objects.removeAll(keepCapacity: true)
-        tableView.reloadData()
+        tableView.reloadData()       
         
     }
     
@@ -56,9 +56,6 @@ class MasterViewController: UITableViewController {
     func submitAnswer(answer:String) {
         let lowerAnswer = answer.lowercaseString
         
-        let errorTitle: String
-        let errorMessage: String
-        
         if wordIsPossible(lowerAnswer) {
             if wordIsOriginal(lowerAnswer) {
                 if wordIsReal(lowerAnswer) {
@@ -68,23 +65,20 @@ class MasterViewController: UITableViewController {
                     
                     return
                 } else {
-                    errorTitle = "Word not recognized"
-                    errorMessage = "You can't just make them up, you know!"
+                    showErrorMessage("Word not recognized", message: "You can't just make them up, you know!")
                 }
             } else {
-                errorTitle = "Word used already"
-                errorMessage = "Be more original!"
+                showErrorMessage("Word used already", message: "Be more original!")
             }
         } else {
-            errorTitle = "Word not possible"
-            errorMessage = "You can't spell that word from '\(title!.lowercaseString)'"
+            showErrorMessage("Word not possible", message: "You can't spell that word from '\(title!.lowercaseString)'")
         }
-        
-        let ac = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .Alert)
+    }
+    
+    func showErrorMessage(title: String, message: String) {
+        let ac = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         ac.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
         presentViewController(ac, animated: true, completion: nil)
-        
-        
     }
     
     func wordIsPossible(word: String) -> Bool {
